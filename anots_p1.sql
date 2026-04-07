@@ -26,7 +26,7 @@ BEGIN
     END LOOP;
     CLOSE cur_sobreviventes;
     RAISE NOTICE 
-        'Número de passageiros sobreviventes na 1ª classe: %', 
+        'O número de passageiros que sobreviveram na 1ª classe é %', 
         v_tot_sobreviventes;
 END;
 $$;
@@ -63,7 +63,7 @@ BEGIN
     IF v_total = 0 THEN
         RAISE NOTICE 'Resultado: %', -1;
     ELSE
-        RAISE NOTICE 'Quantidade de mulheres sobreviventes: %', v_total;
+        RAISE NOTICE 'Mulheres sobreviventes: %', v_total;
     END IF;
 END $$;
 
@@ -96,6 +96,13 @@ BEGIN
     CLOSE cur_cherbourg_fare_alta;
 
     RAISE NOTICE
-        'Quantidade de passageiros embarcados em Cherbourg com tarifa > 50: %',
+        'Número de passageiros embarcados em Cherbourg e com tarifa > 50: %',
         v_total;
 END $$;
+
+-- Enunciado 5  Limpeza de valores NULL 
+-- Escreva um cursor não vinculado para a remoção de todas as tuplas que possuam o valor 
+-- NULL em pelo menos um de seus campos. Antes de fazer a sua remoção, exiba a tupla. A 
+-- seguir, mostre as tuplas remanescentes, de baixo para cima. 
+-- Mensagem de commit: feat(p1): remove com dados faltantes
+
