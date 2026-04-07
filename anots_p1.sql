@@ -106,3 +106,63 @@ END $$;
 -- seguir, mostre as tuplas remanescentes, de baixo para cima. 
 -- Mensagem de commit: feat(p1): remove com dados faltantes
 
+DO $$
+DECLARE
+    ref refcursor;
+    ref_scroll refcursor;
+    v_passengerid INTEGER;
+    v_survived INTEGER;
+    v_pclass INTEGER;
+    v_name TEXT;
+    v_sex TEXT;
+    v_age NUMERIC;
+    v_fare NUMERIC;
+    v_embarked TEXT;
+BEGIN
+    OPEN ref FOR EXECUTE
+    format
+    (
+        '
+        SELECT passengerid, survived, pclass, name, sex, age, fare, embarked
+        FROM tb_titanic
+        WHERE passengerid IS NULL
+           OR survived IS NULL
+           OR pclass IS NULL
+           OR name IS NULL
+           OR sex IS NULL
+           OR age IS NULL
+           OR fare IS NULL
+           OR embarked IS NULL
+        '
+    );
+
+    LOOP
+        FETCH ref
+        INTO v_passengerid, v_survived, v_pclass,
+             v_name, v_sex, v_age, v_fare, v_embarked;
+
+        EXIT WHEN NOT FOUND;
+        RAISE NOTICE
+            'Tuplas removidas -> ID: %, Nome: %, Sexo: %, Idade: %, Tarifa: %, Embarque: %',
+            v_passengerid, v_name, v_sex, v_age, v_fare, v_embarked;
+        DELETE FROM tb_titanic
+        WHERE passengerid = v_passengerid;
+    END LOOP;
+    CLOSE ref;
+    OPEN ref_scroll SCROLL FOR
+        SELECT passengerid, survived, pclass, name, sex, age, fare, embarked
+        FROM tb_titanic
+        ORDER BY passengerid;
+    FETCH LAST FROM ref_scroll
+    INTO v_passengerid, v_survived, v_pclass,
+         v_name, v_sex, v_age, v_fare, v_embarked;
+    WHILE FOUND LOOP
+        RAISE NOTICE
+            'Tuplas que restaram -> ID: %, Nome: %, Sexo: %, Idade: %, Tarifa: %, Embarque: %',
+            v_passengerid, v_name, v_sex, v_age, v_fare, v_embarked;
+        FETCH PRIOR FROM ref_scroll
+        INTO v_passengerid, v_survived, v_pclass,
+             v_name, v_sex, v_age, v_fare, v_embarked;
+    END LOOP;
+    CLOSE ref_scroll;
+END $$;
