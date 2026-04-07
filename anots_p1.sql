@@ -6,7 +6,7 @@
 DO $$
 DECLARE
     cur_sobreviventes REFCURSOR;
-    v_Survived INT;
+    v_survived INT;
     v_tot_sobreviventes INT := 0;
 BEGIN
     OPEN cur_sobreviventes FOR EXECUTE
@@ -14,7 +14,7 @@ BEGIN
     (
         '
         SELECT survived
-         FROM tb_titanic
+         FROM p1_titanic
          WHERE pclass = 1
            AND survived = 1;
            '
@@ -48,8 +48,8 @@ BEGIN
     (
         '
         SELECT survived
-         FROM tb_titanic
-         WHERE sex = ''female''
+         FROM p1_titanic
+         WHERE sex = 'female'
            AND survived = 1
            '
     );
@@ -77,7 +77,7 @@ DECLARE
     -- Cursor vinculado (explícito)
     CURSOR cur_cherbourg_fare_alta IS
         SELECT passengerid
-        FROM tb_titanic
+        FROM p1_titanic
         WHERE fare > 50
           AND embarked = 'C';
 
@@ -135,12 +135,10 @@ BEGIN
            OR embarked IS NULL
         '
     );
-
     LOOP
         FETCH ref
         INTO v_passengerid, v_survived, v_pclass,
              v_name, v_sex, v_age, v_fare, v_embarked;
-
         EXIT WHEN NOT FOUND;
         RAISE NOTICE
             'Tuplas removidas -> ID: %, Nome: %, Sexo: %, Idade: %, Tarifa: %, Embarque: %',
